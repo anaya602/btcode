@@ -43,11 +43,11 @@ const RECONN_SECS     = 30;
 const ROUNDS_PER_GAME = 3;
 const ROUND_SEC       = 90;
 
-// ─── Room ID Generator (6-character codes) ──────────────────
+// ─── Room ID Generator (8-character codes) ──────────────────
 function generateRoomCode() {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let code = "";
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 8; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return code;
@@ -449,7 +449,7 @@ const gameServer = new Server({
   transport: new WebSocketTransport({ server: require("http").createServer(app) }),
 });
 
-// Define "tower" room with 6-character room code
+// Define "tower" room with 8-character room code
 gameServer.define("tower", TowerRoom, {
   generateRoomIdFn: () => generateRoomCode(),
 });
