@@ -383,7 +383,7 @@ class TowerRoom extends Room {
     this.state.players.forEach(p => { p.hasPending = false; });
   }
 
-  // ── Physics tick ──────────────────────────────────────────
+  // ── Physics tick ─────────────────────────────────────���────
 
   _startPhysics() {
     if (this._physTick) return;
@@ -449,9 +449,24 @@ const gameServer = new Server({
   transport: new WebSocketTransport({ server: require("http").createServer(app) }),
 });
 
-// Define "tower" room with 6-character custom room code
+// Define "tower" room WITH custom 6-character room code generator
+gameServer.define("tower", TowerRoom);
+
+// Override room spawning to use custom ID generator
+gameServer.onBeforeCreate = async (options) => {
+  options.name = "tower";
+};
+
+// Create a handler to generate the room ID
+const originalDefine = gameServer.define.bind(gameServer);
+gameServer.define = function(name, handler, options = {}) {
+  options.generateRoomIdFn = generateRoomCode;
+  return originalDefine(name, handler, options);
+};
+
+// Re-define tower room with custom ID generator
 gameServer.define("tower", TowerRoom, {
-  generateRoomIdFn: () => generateRoomCode(),
+  generateRoomIdFn: generateRoomCode,
 });
 
 gameServer.listen(PORT).then(() => {
