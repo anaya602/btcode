@@ -43,6 +43,16 @@ const RECONN_SECS     = 30;
 const ROUNDS_PER_GAME = 3;
 const ROUND_SEC       = 90;
 
+// ─── Room ID Generator (6-character codes) ──────────────────
+function generateRoomCode() {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let code = "";
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
+
 // ─── Schemas ─────────────────────────────────────────────────
 
 class BlockState extends Schema {
@@ -439,7 +449,10 @@ const gameServer = new Server({
   transport: new WebSocketTransport({ server: require("http").createServer(app) }),
 });
 
-gameServer.define("tower", TowerRoom);
+// Define "tower" room with 6-character room code
+gameServer.define("tower", TowerRoom, {
+  generateRoomIdFn: () => generateRoomCode(),
+});
 
 gameServer.listen(PORT).then(() => {
   console.log(`\n🗼 Blindfold Tower running on http://localhost:${PORT}`);
